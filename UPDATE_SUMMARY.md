@@ -37,8 +37,9 @@
 - Wouldn't work properly in all mission scenarios
 
 **Solution**:
-- Now uses `[side _civilian, side _x] call BIS_fnc_sideIsEnemy`
-- Properly detects any hostile sides relative to civilians
+- Now uses `[_playerSide, side _x] call BIS_fnc_sideIsEnemy` where `_playerSide` is the interacting player's side
+- Properly detects any hostile sides relative to the player asking for intel (MP-safe)
+- Prevents friendly BLUFOR players from being flagged as enemies in multiplayer
 - Updated both `fn_gatherIntelligence.sqf` and `fn_checkNearbyEnemies.sqf`
 
 ### 4. ✅ **Enhanced Mine Detection**

@@ -24,10 +24,21 @@ params ["_civilian"];
 private _knownEnemies = [];
 private _detectedEnemies = [];
 
+// Determine the reference side for hostility checks: prefer interacting player's side
+private _playerSide = side player;
+if (!isNil "CI_CurrentPlayer") then {
+    private _p = CI_CurrentPlayer;
+    if (!isNull _p) then { _playerSide = side _p; };
+};
+
 // First pass: detect individual enemies
 {
-    // Check if unit is hostile to civilians (not same side and not civilian)
-    if (alive _x && {side _x != civilian} && {[side _civilian, side _x] call BIS_fnc_sideIsEnemy}) then {
+    // Check if unit is hostile to the interacting player's side (exclude the civilian itself)
+    if (
+        alive _x &&
+        {_x != _civilian} &&
+        {[_playerSide, side _x] call BIS_fnc_sideIsEnemy}
+    ) then {
         private _distance = _civilian distance _x;
         // High detection chance when actively looking
         private _noticeChance = 1.0 - (_distance / CI_INTEL_RANGE * 0.8); // 100% at 0m, 20% at max range

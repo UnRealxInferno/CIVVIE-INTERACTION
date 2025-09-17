@@ -3,12 +3,12 @@ class CfgPatches
     class ci_interaction
     {
         name = "Civilian Interaction System";
-        author = "YourName";
+        author = "Inferno";
         requiredVersion = 1.0;
         requiredAddons[] = {"A3_Functions_F"};
         units[] = {};
         weapons[] = {};
-        version = "1.0.0";
+        version = "0.1.5";
     };
 };
 
