@@ -31,8 +31,7 @@ private _detectedEnemies = [];
         private _distance = _civilian distance _x;
         // High detection chance when actively looking
         private _noticeChance = 1.0 - (_distance / CI_INTEL_RANGE * 0.8); // 100% at 0m, 20% at max range
-        if (speed _x > 1) then { _noticeChance = _noticeChance + 0.3; }; // Moving bonus
-        if (_x getVariable ["ace_firedShots", 0] > 0) then { _noticeChance = _noticeChance + 0.4; }; // Firing bonus
+        if (speed _x > 1) then { _noticeChance = _noticeChance + 0.3; }; // Moving bonus for easier detection
         _noticeChance = _noticeChance max 0.1; // Minimum 10% chance
         if (random 1 < _noticeChance) then { 
             _detectedEnemies pushBack _x;
@@ -117,17 +116,19 @@ private _detectedMines = [];
     // Apply detection chance if it's an explosive and alive
     if (_isExplosive && {!isNull _x} && {alive _x}) then {
         private _distance = _civilian distance _x;
-        // Mine detection when actively looking
-        private _noticeChance = 0.8 - (_distance / CI_INTEL_RANGE * 0.6); // 80% at 0m, 20% at max range
-        _noticeChance = _noticeChance max 0.05; // Minimum 5% chance
-        if (random 1 < _noticeChance) then { 
-            _detectedMines pushBack _x;
+        // Simplified mine detection - uniform 300m range with logical detection rates
+        if (_distance <= 300) then {
+            private _noticeChance = 0.8 - (_distance / 300 * 0.7); // 80% at 0m, 10% at 300m (linear decrease)
+            if (random 1 < _noticeChance) then { 
+                _detectedMines pushBack _x;
+            };
         };
     };
-} forEach (_civilian nearObjects ["All", CI_INTEL_RANGE]);
+} forEach (_civilian nearObjects ["All", 300]);
 
 // Second pass: for each detected mine, find nearby mines to create cluster/field intel
 private _processedMines = [];
+
 {
     private _primaryMine = _x;
     if !(_primaryMine in _processedMines) then {

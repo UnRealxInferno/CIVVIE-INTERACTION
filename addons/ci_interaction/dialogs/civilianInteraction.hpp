@@ -99,11 +99,22 @@ class CivilianInteractionDialog
             idc = 2401;
             text = "";
             x = 0.32; y = 0.65; w = 0.36; h = 0.04;
-            colorText[] = {0.8,0.8,0.8,1};
-            sizeEx = 0.03;
-            style = ST_CENTER;
-        };
-    };
+			colorText[] = {0.8,0.8,0.8,1};
+			sizeEx = 0.03;
+			style = ST_CENTER;
+			};
+			};
 
-    onLoad = "[] spawn { _reputationText = ''; switch (true) do { case (CI_PlayerReputation >= 80): {_reputationText = 'Hero'}; case (CI_PlayerReputation >= 60): {_reputationText = 'Trusted'}; case (CI_PlayerReputation >= 40): {_reputationText = 'Neutral'}; case (CI_PlayerReputation >= 20): {_reputationText = 'Suspicious'}; default {_reputationText = 'Hostile'}; }; ctrlSetText [2401, format ['Reputation: %1 (%2/100)', _reputationText, CI_PlayerReputation]]; };";
-};
+			onLoad = "[] spawn {
+				private _disp = (findDisplay 2400) displayCtrl 2401;
+				private _rep = CI_PlayerReputation;
+				private _label = if (_rep >= 80) then {'Hero'} else {
+					if (_rep >= 60) then {'Trusted'} else {
+						if (_rep >= 40) then {'Neutral'} else {
+							if (_rep >= 20) then {'Suspicious'} else {'Hostile'}
+						}
+					}
+				};
+				_disp ctrlSetText format ['Reputation: %1 (%2/100)', _label, _rep];
+			};";
+			};

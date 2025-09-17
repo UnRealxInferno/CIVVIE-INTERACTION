@@ -15,6 +15,7 @@ A comprehensive addon that allows players to interact with civilians to gather i
 ### Intelligence Types
 - **Enemy Intelligence**: Detects hostile units within configurable radius
   - **Cluster Detection**: Groups nearby enemies together (within 150m) for realistic reporting
+  - **Distance Prioritization**: Always reports closest enemy clusters first for tactical relevance
   - Reports approximate numbers ("I saw 3 armed men") and distances
   - **Smart Distance Reporting**: "Really close by" for threats under 100m, rounded distances for farther enemies
   - Uses proper side hostility checks via `BIS_fnc_sideIsEnemy`
@@ -22,6 +23,7 @@ A comprehensive addon that allows players to interact with civilians to gather i
 
 - **Explosive Device Detection**: Mine and explosive detection with limitations
   - **Cluster Detection**: Groups nearby mines/explosives together (within 50m) for minefield reporting
+  - **Distance Prioritization**: Always reports closest mine clusters first for immediate threat awareness
   - **Traditional mines** (MineBase class) - Full 3DEN editor support
   - **Demo charges and satchel charges** - Full support
   - **Claymore mines** - Full support  

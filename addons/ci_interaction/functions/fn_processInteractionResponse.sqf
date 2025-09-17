@@ -40,7 +40,19 @@ switch (_questionType) do {
             if (_success) then {
                 private _enemies = _civilian getVariable ["CI_KnownEnemies", []];
                 if ((count _enemies) > 0) then {
-                    private _enemyCluster = selectRandom _enemies;
+                    // Prioritize closest enemy cluster instead of random selection
+                    private _closestCluster = _enemies select 0;
+                    private _closestDistance = (_closestCluster select 2); // Distance is index 2
+                    
+                    {
+                        private _currentDistance = _x select 2;
+                        if (_currentDistance < _closestDistance) then {
+                            _closestCluster = _x;
+                            _closestDistance = _currentDistance;
+                        };
+                    } forEach _enemies;
+                    
+                    private _enemyCluster = _closestCluster;
                     _enemyCluster params ["_position", "_enemyCount", "_distance", "_unitArray"];
                     
                     // Create map marker for the cluster
@@ -57,19 +69,30 @@ switch (_questionType) do {
                         _distanceText = format ["%1 meters away", (round (_distance / 100)) * 100];
                     };
                     
+                    // Vague group size descriptions to avoid counting bugs
                     if (_enemyCount == 1) then {
                         _marker setMarkerTextLocal "Enemy Spotted";
                         _response = format ["Yes, I saw an armed man %1. I've marked it on your map.", _distanceText];
                     } else {
-                        _marker setMarkerTextLocal format ["Enemy Group (%1)", _enemyCount];
-                        _response = format ["Yes, I saw %1 armed men %2. They seem to be together. I've marked their location on your map.", _enemyCount, _distanceText];
+                        if (_enemyCount <= 4) then {
+                            _marker setMarkerTextLocal "Small Enemy Group";
+                            _response = format ["Yes, I saw a small group of armed men %1. They seem to be together. I've marked their location on your map.", _distanceText];
+                        } else {
+                            if (_enemyCount <= 10) then {
+                                _marker setMarkerTextLocal "Large Enemy Group";
+                                _response = format ["Yes, I saw a larger group of armed men %1. There were quite a few of them together. I've marked their location on your map.", _distanceText];
+                            } else {
+                                _marker setMarkerTextLocal "Major Enemy Force";
+                                _response = format ["Yes, I saw a big group of armed men %1. There were many of them - it looked like a serious force. I've marked their location on your map.", _distanceText];
+                            };
+                        };
                     };
                     
                     _marker setMarkerSizeLocal [1.0, 1.0];
                     _gaveEnemyIntel = true;
                     
-                    // Remove marker after 5 minutes
-                    [{deleteMarkerLocal _this}, _markerName, 300] spawn {
+                    // Remove marker after 30 seconds (was 5 minutes)
+                    [{deleteMarkerLocal _this}, _markerName, 30] spawn {
                         params ["_code", "_marker", "_delay"];
                         sleep _delay;
                         _marker call _code;
@@ -103,7 +126,19 @@ switch (_questionType) do {
             if (_success) then {
                 private _mines = _civilian getVariable ["CI_KnownMines", []];
                 if ((count _mines) > 0) then {
-                    private _mineCluster = selectRandom _mines;
+                    // Prioritize closest mine cluster instead of random selection
+                    private _closestCluster = _mines select 0;
+                    private _closestDistance = (_closestCluster select 2); // Distance is index 2
+                    
+                    {
+                        private _currentDistance = _x select 2;
+                        if (_currentDistance < _closestDistance) then {
+                            _closestCluster = _x;
+                            _closestDistance = _currentDistance;
+                        };
+                    } forEach _mines;
+                    
+                    private _mineCluster = _closestCluster;
                     _mineCluster params ["_position", "_mineCount", "_distance", "_mineArray"];
                     
                     // Create map marker for mine location
@@ -121,19 +156,24 @@ switch (_questionType) do {
                         _distanceText = format ["%1 meters away", (round (_distance / 100)) * 100];
                     };
                     
-                    // Format response based on mine count and distance
+                    // Format response based on mine count and distance  
                     if (_mineCount == 1) then {
                         _marker setMarkerTextLocal "Possible Mine";
                         _response = format ["Be careful! I think there might be explosives buried %1. I've marked the area on your map.", _distanceText];
                     } else {
-                        _marker setMarkerTextLocal format ["Minefield (%1)", _mineCount];
-                        _response = format ["Be very careful! I think there's a minefield with %1 explosives %2. They seem to be placed together. I've marked the dangerous area on your map.", _mineCount, _distanceText];
+                        if (_mineCount <= 4) then {
+                            _marker setMarkerTextLocal "Small Minefield";
+                            _response = format ["Be very careful! I think there's a small minefield %1. There seem to be several explosives placed together. I've marked the dangerous area on your map.", _distanceText];
+                        } else {
+                            _marker setMarkerTextLocal "Large Minefield";
+                            _response = format ["Be extremely careful! I think there's a large minefield %1. There are many explosives in that area - it looks very dangerous. I've marked it on your map.", _distanceText];
+                        };
                     };
                     
                     _gaveMineIntel = true;
                     
-                    // Remove marker after 10 minutes
-                    [{deleteMarkerLocal _this}, _markerName, 600] spawn {
+                    // Remove marker after 30 seconds
+                    [{deleteMarkerLocal _this}, _markerName, 30] spawn {
                         params ["_code", "_marker", "_delay"];
                         sleep _delay;
                         _marker call _code;

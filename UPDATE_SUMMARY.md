@@ -211,6 +211,22 @@ All issues have been resolved and the system is now production-ready with full c
 - `fn_gatherIntelligence.sqf` - Added mine clustering system with 50m radius
 - `fn_processInteractionResponse.sqf` - Updated to handle mine cluster data format
 
+### 10. ✅ **Distance-Based Threat Prioritization**
+
+**Problem**: 
+- Civilians would randomly report enemy/mine clusters regardless of distance
+- Could report enemies 800m away while ignoring closer threats at 200m
+- Not tactically useful - players need intel on immediate threats first
+
+**Solution**:
+- Intelligence now prioritizes closest enemy clusters and minefields
+- Replaced `selectRandom` with closest-distance algorithm
+- Civilians always report the most immediate threat first
+- Tactical advantage: Players get actionable intel about nearby dangers
+
+**Changed Files**:
+- `fn_processInteractionResponse.sqf` - Added distance-based prioritization for both enemy and mine intel
+
 ### 9. ✅ **Code Simplification and Cleanup**
 
 **Problem**: 
