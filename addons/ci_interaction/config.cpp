@@ -25,6 +25,7 @@ class CfgFunctions
                 postInit = 1;
             };
             class addInteractionToUnit {};
+            class removeInteractionFromUnit {};
             class showInteractionMenu {};
             class processInteractionResponse {};
             class calculateReputation {};

@@ -92,7 +92,16 @@ class CivilianInteractionDialog
             idc = -1;
             text = "Leave";
             x = 0.51; y = 0.59; w = 0.17; h = 0.04;
-            action = "closeDialog 0;";
+            action = "
+                if (!isNil 'CI_CurrentCivilian') then {
+                    private _civilian = CI_CurrentCivilian;
+                    if (!isNull _civilian && {_civilian getVariable ['CI_WasMovingDisabled', false]}) then {
+                        _civilian enableAI 'MOVE';
+                        _civilian setVariable ['CI_WasMovingDisabled', false];
+                    };
+                };
+                closeDialog 0;
+            ";
         };
         class ReputationDisplay: RscText
         {
@@ -105,16 +114,26 @@ class CivilianInteractionDialog
 			};
 			};
 
-			onLoad = "[] spawn {
-				private _disp = (findDisplay 2400) displayCtrl 2401;
-				private _rep = CI_PlayerReputation;
-				private _label = if (_rep >= 80) then {'Hero'} else {
-					if (_rep >= 60) then {'Trusted'} else {
-						if (_rep >= 40) then {'Neutral'} else {
-							if (_rep >= 20) then {'Suspicious'} else {'Hostile'}
-						}
-					}
-				};
-				_disp ctrlSetText format ['Reputation: %1 (%2/100)', _label, _rep];
-			};";
-			};
+    onLoad = "[] spawn {
+        private _disp = (findDisplay 2400) displayCtrl 2401;
+        private _rep = CI_PlayerReputation;
+        private _label = if (_rep >= 80) then {'Hero'} else {
+            if (_rep >= 60) then {'Trusted'} else {
+                if (_rep >= 40) then {'Neutral'} else {
+                    if (_rep >= 20) then {'Suspicious'} else {'Hostile'}
+                }
+            }
+        };
+        _disp ctrlSetText format ['Reputation: %1 (%2/100)', _label, _rep];
+    };";
+    
+    onUnload = "
+        if (!isNil 'CI_CurrentCivilian') then {
+            private _civilian = CI_CurrentCivilian;
+            if (!isNull _civilian && {_civilian getVariable ['CI_WasMovingDisabled', false]}) then {
+                _civilian enableAI 'MOVE';
+                _civilian setVariable ['CI_WasMovingDisabled', false];
+            };
+        };
+    ";
+};

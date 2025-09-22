@@ -23,22 +23,46 @@ CI_PlayerReputation = (CI_PlayerReputation max 1) min 100;
 // Configurable constants (can be overridden preInit by mission maker)
 if (isNil "CI_INTEL_RANGE") then { CI_INTEL_RANGE = 1000; };
 
-// Background process to attach interaction to new civilians
+// Background process to:
+// 1) Permanently mark any unit that is (or becomes) non-civilian as ineligible (CI_EverNonCivilian)
+// 2) Attach interaction to eligible civilians only
+// 3) Remove interaction from ineligible or non-civilian units
 [] spawn {
     while {true} do {
         {
-            if (side _x == civilian && !(_x getVariable ["CI_InteractionAdded", false])) then {
-                [_x] call CI_fnc_addInteractionToUnit;
+            private _unit = _x;
+
+            // Permanently flag units that are any side except civilian
+            if (side _unit != civilian) then {
+                if (!(_unit getVariable ["CI_EverNonCivilian", false])) then {
+                    _unit setVariable ["CI_EverNonCivilian", true, true]; // publicVar true to propagate in MP
+                };
+            };
+
+            // If unit is civilian and never flagged, ensure it has interaction
+            if (side _unit == civilian && !(_unit getVariable ["CI_EverNonCivilian", false])) then {
+                if (!(_unit getVariable ["CI_InteractionAdded", false])) then {
+                    [_unit] call CI_fnc_addInteractionToUnit;
+                };
+            } else {
+                // Otherwise, ensure interaction is removed
+                [_unit] call CI_fnc_removeInteractionFromUnit;
             };
         } forEach allUnits;
         sleep 5;
     };
 };
 
-// Initialize existing civilians at startup
+// Initialize existing units at startup with eligibility gating
 {
-    if (side _x == civilian) then {
-        [_x] call CI_fnc_addInteractionToUnit;
+    private _unit = _x;
+    if (side _unit != civilian) then {
+        _unit setVariable ["CI_EverNonCivilian", true, true];
+        [_unit] call CI_fnc_removeInteractionFromUnit;
+    } else {
+        if !(_unit getVariable ["CI_EverNonCivilian", false]) then {
+            [_unit] call CI_fnc_addInteractionToUnit;
+        };
     };
 } forEach allUnits;
 

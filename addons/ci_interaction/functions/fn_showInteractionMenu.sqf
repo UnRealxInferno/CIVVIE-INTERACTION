@@ -12,6 +12,10 @@ private _hasSharedIntel = _civilian getVariable ["CI_HasSharedIntel", false];
 CI_CurrentCivilian = _civilian;
 CI_CurrentPlayer = _player;
 
+// Stop civilian movement during conversation
+_civilian disableAI "MOVE";
+_civilian setVariable ["CI_WasMovingDisabled", true];
+
 // Update civilian's intelligence before interaction
 [_civilian] call CI_fnc_gatherIntelligence;
 
