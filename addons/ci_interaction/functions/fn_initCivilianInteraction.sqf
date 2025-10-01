@@ -28,6 +28,9 @@ if (isNil "CI_INTEL_RANGE") then { CI_INTEL_RANGE = 1000; };
 // 2) Attach interaction to eligible civilians only
 // 3) Remove interaction from ineligible or non-civilian units
 [] spawn {
+    // Wait for mission init to complete before starting monitoring
+    sleep 3;
+    
     while {true} do {
         {
             private _unit = _x;
@@ -40,8 +43,10 @@ if (isNil "CI_INTEL_RANGE") then { CI_INTEL_RANGE = 1000; };
             };
 
             // If unit is civilian and never flagged, ensure it has interaction
+            // Also check that unit is not unconscious or incapacitated
             if (side _unit == civilian && !(_unit getVariable ["CI_EverNonCivilian", false])) then {
-                if (!(_unit getVariable ["CI_InteractionAdded", false])) then {
+                private _lifeState = lifeState _unit;
+                if ((_lifeState == "HEALTHY" || _lifeState == "INJURED") && !(_unit getVariable ["CI_InteractionAdded", false])) then {
                     [_unit] call CI_fnc_addInteractionToUnit;
                 };
             } else {
@@ -54,17 +59,25 @@ if (isNil "CI_INTEL_RANGE") then { CI_INTEL_RANGE = 1000; };
 };
 
 // Initialize existing units at startup with eligibility gating
-{
-    private _unit = _x;
-    if (side _unit != civilian) then {
-        _unit setVariable ["CI_EverNonCivilian", true, true];
-        [_unit] call CI_fnc_removeInteractionFromUnit;
-    } else {
-        if !(_unit getVariable ["CI_EverNonCivilian", false]) then {
-            [_unit] call CI_fnc_addInteractionToUnit;
+// Wait briefly to ensure all mission objects are created
+[] spawn {
+    sleep 3;
+    
+    {
+        private _unit = _x;
+        if (side _unit != civilian) then {
+            _unit setVariable ["CI_EverNonCivilian", true, true];
+            [_unit] call CI_fnc_removeInteractionFromUnit;
+        } else {
+            if !(_unit getVariable ["CI_EverNonCivilian", false]) then {
+                private _lifeState = lifeState _unit;
+                if (_lifeState == "HEALTHY" || _lifeState == "INJURED") then {
+                    [_unit] call CI_fnc_addInteractionToUnit;
+                };
+            };
         };
-    };
-} forEach allUnits;
-
-systemChat "Civilian Interaction System (Addon) initialized";
+    } forEach allUnits;
+    
+    systemChat "Civilian Interaction System (Addon) initialized";
+};
 // ...existing code...
