@@ -179,7 +179,8 @@ private _processedMines = [];
 private _deadCivilians = [];
 
 {
-    // Check if unit is a dead civilian (nearEntities already filters by range)
+    // Check if unit is a dead civilian
+    // Note: nearEntities with CI_DEATH_DETECTION_RANGE already filters by distance
     if (
         !alive _x &&
         {side _x == civilian} &&
