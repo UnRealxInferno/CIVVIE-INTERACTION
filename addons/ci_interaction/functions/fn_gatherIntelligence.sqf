@@ -180,7 +180,7 @@ private _deadCivilians = [];
 
 {
     // Check if unit is a dead civilian
-    // Note: nearEntities with CI_DEATH_DETECTION_RANGE already filters by distance
+    // Note: nearEntities uses CI_DEATH_DETECTION_RANGE parameter to filter by distance
     if (
         !alive _x &&
         {side _x == civilian} &&
