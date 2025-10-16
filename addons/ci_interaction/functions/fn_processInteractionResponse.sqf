@@ -13,14 +13,8 @@ if (isNil "_civilian" || {isNil "_player"}) exitWith { hint "Error: Invalid inte
 private _hasSharedEnemyIntel = _civilian getVariable ["CI_HasSharedEnemyIntel", false];
 private _hasSharedMineIntel = _civilian getVariable ["CI_HasSharedMineIntel", false];
 
-private _reputation = CI_PlayerReputation;
-private _successChance = switch (true) do {
-    case (_reputation >= 80): {0.9};
-    case (_reputation >= 60): {0.7};
-    case (_reputation >= 40): {0.5};
-    case (_reputation >= 20): {0.3};
-    default {0.1};
-};
+// Random success chance between 25-75%
+private _successChance = 0.25 + (random 0.5);
 
 private _success = random 1 < _successChance;
 private _response = "";
