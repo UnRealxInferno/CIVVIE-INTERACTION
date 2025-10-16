@@ -38,6 +38,9 @@ A comprehensive addon that allows players to interact with civilians to gather i
 - **Dynamic Responses**: Civilian cooperation varies based on reputation
 - **Mission Maker Control**: Can be overridden in mission `init.sqf`
 - **Realistic Behavior**: Low reputation = less cooperation, high reputation = more helpful
+- **Death Detection**: Civilians detect nearby dead civilians (within 200m) and become significantly less cooperative
+  - Each dead civilian reduces cooperation chance by 15% (maximum 60% reduction)
+  - Civilians provide contextual fear-based responses when refusing to help due to nearby deaths
 
 ## Installation
 
@@ -65,6 +68,22 @@ Add this to your mission's `init.sqf` to set a custom starting reputation:
 CI_PlayerReputation = 75; // High reputation - civilians are cooperative
 ```
 
+#### Configuring Death Detection System
+Customize the death detection behavior in your mission's `init.sqf`:
+```sqf
+// Detection range for dead civilians (default: 200m)
+CI_DEATH_DETECTION_RANGE = 150;
+
+// Penalty per dead civilian (default: 0.15 or 15%)
+CI_DEATH_PENALTY_PER_CIVILIAN = 0.20;
+
+// Maximum total penalty (default: 0.6 or 60%)
+CI_DEATH_PENALTY_MAX = 0.5;
+
+// Minimum success chance floor (default: 0.05 or 5%)
+CI_MIN_SUCCESS_CHANCE = 0.10;
+```
+
 #### Reputation Scale
 - **0-20**: Very hostile - civilians refuse to help
 - **21-40**: Unfriendly - limited cooperation
@@ -88,9 +107,16 @@ CI_PlayerReputation = 75; // High reputation - civilians are cooperative
 ## Configuration
 
 ### Detection Ranges
-- **Enemy Detection**: 1000m radius (configurable in function)
-- **Mine/IED Detection**: 1000m radius (configurable in function)
+- **Enemy Detection**: 1000m radius (configurable via `CI_INTEL_RANGE`)
+- **Mine/IED Detection**: 1000m radius (configurable via `CI_INTEL_RANGE`)
+- **Dead Civilian Detection**: 200m radius (configurable via `CI_DEATH_DETECTION_RANGE`)
 - **Map Marker Duration**: 300 seconds (5 minutes) auto-removal
+
+### Death Detection Parameters
+- **CI_DEATH_DETECTION_RANGE**: Detection range for dead civilians (default: 200m)
+- **CI_DEATH_PENALTY_PER_CIVILIAN**: Cooperation penalty per death (default: 0.15 or 15%)
+- **CI_DEATH_PENALTY_MAX**: Maximum total penalty cap (default: 0.6 or 60%)
+- **CI_MIN_SUCCESS_CHANCE**: Minimum success chance floor (default: 0.05 or 5%)
 
 ### Supported Explosive Types
 The addon detects a wide range of explosive devices:
@@ -125,6 +151,14 @@ All functions are registered under the `CI` tag and can be called using:
 ```sqf
 [] call CI_fnc_functionName;
 ```
+
+### Civilian Variables
+- `CI_DeadCiviliansNearby`: Number of dead civilians detected within 200m (set during intelligence gathering)
+- `CI_HasSharedEnemyIntel`: Boolean flag tracking if civilian has shared enemy intelligence
+- `CI_HasSharedMineIntel`: Boolean flag tracking if civilian has shared mine intelligence
+- `CI_InConversation`: Boolean flag indicating if civilian is currently in conversation
+- `CI_KnownEnemies`: Array of detected enemy clusters
+- `CI_KnownMines`: Array of detected mine clusters
 
 ### Compatibility
 - **Base Game**: Full compatibility with vanilla Arma 3
@@ -167,4 +201,5 @@ Created for Arma 3 mission makers who want realistic civilian interaction mechan
 - **v1.0**: Initial release with core functionality
 - **v1.1**: Enhanced IED detection and reputation system
 - **v1.2**: Improved multiplayer compatibility and performance
-- **Current**: Comprehensive explosive detection and map marker system
+- **v1.3**: Added civilian death detection system - civilians detect nearby deaths and become less cooperative
+- **Current**: Comprehensive explosive detection, map marker system, and death-aware civilian behavior
