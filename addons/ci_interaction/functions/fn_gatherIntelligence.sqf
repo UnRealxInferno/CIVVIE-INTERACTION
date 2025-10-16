@@ -177,21 +177,17 @@ private _processedMines = [];
 
 // Third pass: detect nearby dead civilians to affect cooperation
 private _deadCivilians = [];
-private _deadCivDetectionRange = 200; // Configurable range for detecting dead civilians
 
 {
-    // Check if unit is a dead civilian
+    // Check if unit is a dead civilian (nearEntities already filters by range)
     if (
         !alive _x &&
         {side _x == civilian} &&
         {_x != _civilian}
     ) then {
-        private _distance = _civilian distance _x;
-        if (_distance <= _deadCivDetectionRange) then {
-            _deadCivilians pushBack _x;
-        };
+        _deadCivilians pushBack _x;
     };
-} forEach (_civilian nearEntities ["Man", _deadCivDetectionRange]);
+} forEach (_civilian nearEntities ["Man", CI_DEATH_DETECTION_RANGE]);
 
 _civilian setVariable ["CI_KnownEnemies", _knownEnemies];
 _civilian setVariable ["CI_KnownMines", _knownMines];

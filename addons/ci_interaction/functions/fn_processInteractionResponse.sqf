@@ -25,9 +25,9 @@ private _successChance = switch (true) do {
 // Apply penalty for nearby dead civilians
 private _deadCiviliansNearby = _civilian getVariable ["CI_DeadCiviliansNearby", 0];
 if (_deadCiviliansNearby > 0) then {
-    // Reduce success chance by 15% per dead civilian, up to maximum 60% reduction
-    private _deathPenalty = (_deadCiviliansNearby * 0.15) min 0.6;
-    _successChance = (_successChance - _deathPenalty) max 0.05; // Minimum 5% chance
+    // Reduce success chance based on configurable penalty values
+    private _deathPenalty = (_deadCiviliansNearby * CI_DEATH_PENALTY_PER_CIVILIAN) min CI_DEATH_PENALTY_MAX;
+    _successChance = (_successChance - _deathPenalty) max CI_MIN_SUCCESS_CHANCE;
 };
 
 private _success = random 1 < _successChance;

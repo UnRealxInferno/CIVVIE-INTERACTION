@@ -68,6 +68,22 @@ Add this to your mission's `init.sqf` to set a custom starting reputation:
 CI_PlayerReputation = 75; // High reputation - civilians are cooperative
 ```
 
+#### Configuring Death Detection System
+Customize the death detection behavior in your mission's `init.sqf`:
+```sqf
+// Detection range for dead civilians (default: 200m)
+CI_DEATH_DETECTION_RANGE = 150;
+
+// Penalty per dead civilian (default: 0.15 or 15%)
+CI_DEATH_PENALTY_PER_CIVILIAN = 0.20;
+
+// Maximum total penalty (default: 0.6 or 60%)
+CI_DEATH_PENALTY_MAX = 0.5;
+
+// Minimum success chance floor (default: 0.05 or 5%)
+CI_MIN_SUCCESS_CHANCE = 0.10;
+```
+
 #### Reputation Scale
 - **0-20**: Very hostile - civilians refuse to help
 - **21-40**: Unfriendly - limited cooperation
@@ -91,10 +107,16 @@ CI_PlayerReputation = 75; // High reputation - civilians are cooperative
 ## Configuration
 
 ### Detection Ranges
-- **Enemy Detection**: 1000m radius (configurable in function)
-- **Mine/IED Detection**: 1000m radius (configurable in function)
-- **Dead Civilian Detection**: 200m radius (configurable in `fn_gatherIntelligence.sqf`)
+- **Enemy Detection**: 1000m radius (configurable via `CI_INTEL_RANGE`)
+- **Mine/IED Detection**: 1000m radius (configurable via `CI_INTEL_RANGE`)
+- **Dead Civilian Detection**: 200m radius (configurable via `CI_DEATH_DETECTION_RANGE`)
 - **Map Marker Duration**: 300 seconds (5 minutes) auto-removal
+
+### Death Detection Parameters
+- **CI_DEATH_DETECTION_RANGE**: Detection range for dead civilians (default: 200m)
+- **CI_DEATH_PENALTY_PER_CIVILIAN**: Cooperation penalty per death (default: 0.15 or 15%)
+- **CI_DEATH_PENALTY_MAX**: Maximum total penalty cap (default: 0.6 or 60%)
+- **CI_MIN_SUCCESS_CHANCE**: Minimum success chance floor (default: 0.05 or 5%)
 
 ### Supported Explosive Types
 The addon detects a wide range of explosive devices:
