@@ -8,9 +8,7 @@ params ["_civilian", "_player"];
 
 // Check if civilian is already in conversation (multiplayer lock)
 private _isInConversation = _civilian getVariable ["CI_InConversation", false];
-if (_isInConversation) exitWith {
-    hint "This civilian is already talking to someone else.";
-};
+if (_isInConversation) exitWith {};
 
 // Lock the civilian for conversation (globally synced)
 _civilian setVariable ["CI_InConversation", true, true];
