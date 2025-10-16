@@ -77,7 +77,5 @@ if (isNil "CI_INTEL_RANGE") then { CI_INTEL_RANGE = 1000; };
             };
         };
     } forEach allUnits;
-    
-    systemChat "Civilian Interaction System (Addon) initialized";
 };
 // ...existing code...

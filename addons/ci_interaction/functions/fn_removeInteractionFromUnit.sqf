@@ -29,7 +29,6 @@ if (_unit getVariable ["CI_InteractionAdded", false]) then {
     // Clear the civilian interaction variables
     if (!isNil "_actionIDs" && {count _actionIDs > 0}) then {
         _unit setVariable ["CI_InteractionAdded", false];
-        systemChat format ["Removed civilian interactions from %1 (side: %2)", name _unit, side _unit];
     };
     _unit setVariable ["CI_HasSharedEnemyIntel", nil];
     _unit setVariable ["CI_HasSharedMineIntel", nil];

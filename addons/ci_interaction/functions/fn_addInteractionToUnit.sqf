@@ -27,7 +27,7 @@ private _actionID = _unit addAction [
     true,
     true,
     "",
-    "alive _target && (lifeState _target == 'HEALTHY' || lifeState _target == 'INJURED') && (side _target == civilian) && !(_target getVariable ['CI_EverNonCivilian', false]) && (_this distance _target) < 3"
+    "alive _target && (lifeState _target == 'HEALTHY' || lifeState _target == 'INJURED') && (side _target == civilian) && !(_target getVariable ['CI_EverNonCivilian', false]) && !(_target getVariable ['CI_InConversation', false]) && (_this distance _target) < 3"
 ];
 
 // Store the action ID for later removal if needed

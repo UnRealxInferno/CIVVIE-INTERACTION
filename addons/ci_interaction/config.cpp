@@ -31,6 +31,8 @@ class CfgFunctions
             class calculateReputation {};
             class gatherIntelligence {};
             class checkNearbyEnemies {};
+            class updateConversationLock {};
+            class cleanupConversation {};
         };
     };
 };
@@ -125,7 +127,7 @@ class CivilianInteractionDialog
             idc = -1;
             text = "Leave";
             x = 0.51; y = 0.59; w = 0.17; h = 0.04;
-            action = "closeDialog 0;";
+            action = "[] call CI_fnc_cleanupConversation; closeDialog 0;";
         };
         class ReputationDisplay: RscText
         {
@@ -139,4 +141,5 @@ class CivilianInteractionDialog
     };
 
     onLoad = "[] spawn { _reputationText = ''; switch (true) do { case (CI_PlayerReputation >= 80): {_reputationText = 'Hero'}; case (CI_PlayerReputation >= 60): {_reputationText = 'Trusted'}; case (CI_PlayerReputation >= 40): {_reputationText = 'Neutral'}; case (CI_PlayerReputation >= 20): {_reputationText = 'Suspicious'}; default {_reputationText = 'Hostile'}; }; ctrlSetText [2401, format ['Reputation: %1 (%2/100)', _reputationText, CI_PlayerReputation]]; };";
+    onUnload = "[] call CI_fnc_cleanupConversation;";
 };
