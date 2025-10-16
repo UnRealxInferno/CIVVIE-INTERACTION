@@ -80,18 +80,11 @@ class CivilianInteractionDialog
             x = 0.32; y = 0.52; w = 0.36; h = 0.05;
             action = "['general'] call CI_fnc_processInteractionResponse;";
         };
-        class ShowReputation: RscButton
-        {
-            idc = -1;
-            text = "Check Reputation";
-            x = 0.32; y = 0.59; w = 0.17; h = 0.04;
-            action = "hint format ['Current Reputation: %1/100', CI_PlayerReputation];";
-        };
         class CloseButton: RscButton
         {
             idc = -1;
             text = "Leave";
-            x = 0.51; y = 0.59; w = 0.17; h = 0.04;
+            x = 0.32; y = 0.59; w = 0.36; h = 0.04;
             action = "
                 if (!isNil 'CI_CurrentCivilian') then {
                     private _civilian = CI_CurrentCivilian;
@@ -103,30 +96,8 @@ class CivilianInteractionDialog
                 closeDialog 0;
             ";
         };
-        class ReputationDisplay: RscText
-        {
-            idc = 2401;
-            text = "";
-            x = 0.32; y = 0.65; w = 0.36; h = 0.04;
-			colorText[] = {0.8,0.8,0.8,1};
-			sizeEx = 0.03;
-			style = ST_CENTER;
-			};
 			};
 
-    onLoad = "[] spawn {
-        private _disp = (findDisplay 2400) displayCtrl 2401;
-        private _rep = CI_PlayerReputation;
-        private _label = if (_rep >= 80) then {'Hero'} else {
-            if (_rep >= 60) then {'Trusted'} else {
-                if (_rep >= 40) then {'Neutral'} else {
-                    if (_rep >= 20) then {'Suspicious'} else {'Hostile'}
-                }
-            }
-        };
-        _disp ctrlSetText format ['Reputation: %1 (%2/100)', _label, _rep];
-    };";
-    
     onUnload = "
         if (!isNil 'CI_CurrentCivilian') then {
             private _civilian = CI_CurrentCivilian;
