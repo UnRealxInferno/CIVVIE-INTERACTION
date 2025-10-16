@@ -210,22 +210,23 @@ switch (_questionType) do {
     };
 };
 
-// Mark civilian as having shared specific intel types
+// Mark civilian as having shared specific intel types (globally synced for multiplayer)
 if (_gaveEnemyIntel) then {
-    _civilian setVariable ["CI_HasSharedEnemyIntel", true];
+    _civilian setVariable ["CI_HasSharedEnemyIntel", true, true];
 };
 if (_gaveMineIntel) then {
-    _civilian setVariable ["CI_HasSharedMineIntel", true];
+    _civilian setVariable ["CI_HasSharedMineIntel", true, true];
 };
 
 // Display response
 hint format ["%1: %2", name _civilian, _response];
 
-// Re-enable civilian movement when conversation ends
-if (_civilian getVariable ["CI_WasMovingDisabled", false]) then {
-    _civilian enableAI "MOVE";
-    _civilian setVariable ["CI_WasMovingDisabled", false];
-};
+// Re-enable civilian movement when conversation ends (execute on server)
+[_civilian, false] remoteExecCall ["CI_fnc_updateConversationLock", 2];
+
+// Release conversation lock (globally synced)
+_civilian setVariable ["CI_InConversation", false, true];
+_civilian setVariable ["CI_TalkingTo", nil, true];
 
 // Close dialog
 closeDialog 0;

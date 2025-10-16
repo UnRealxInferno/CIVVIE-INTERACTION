@@ -6,15 +6,21 @@
 */
 params ["_civilian", "_player"];
 
-// Check if civilian has already shared intel (no cooldown, just track if they've talked)
-private _hasSharedIntel = _civilian getVariable ["CI_HasSharedIntel", false];
+// Check if civilian is already in conversation (multiplayer lock)
+private _isInConversation = _civilian getVariable ["CI_InConversation", false];
+if (_isInConversation) exitWith {
+    hint "This civilian is already talking to someone else.";
+};
+
+// Lock the civilian for conversation (globally synced)
+_civilian setVariable ["CI_InConversation", true, true];
+_civilian setVariable ["CI_TalkingTo", name _player, true];
 
 CI_CurrentCivilian = _civilian;
 CI_CurrentPlayer = _player;
 
-// Stop civilian movement during conversation
-_civilian disableAI "MOVE";
-_civilian setVariable ["CI_WasMovingDisabled", true];
+// Stop civilian movement during conversation (execute on server for dedicated server support)
+[_civilian, true] remoteExecCall ["CI_fnc_updateConversationLock", 2];
 
 // Update civilian's intelligence before interaction
 [_civilian] call CI_fnc_gatherIntelligence;
