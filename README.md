@@ -1,13 +1,13 @@
 # Civilian Interaction Addon for Arma 3
 
-A comprehensive addon that allows players to interact with civilians to gather intelligence about enemy troops and explosive devices (mines/IEDs). The system features a global reputation system that affects civilian cooperation.
+A comprehensive addon that allows players to interact with civilians to gather intelligence about enemy troops and explosive devices (mines/IEDs). Civilians have a random chance (25-75%) of being helpful when asked for information.
 
 ## Features
 
 ### Core Functionality
 - **Interactive Dialog System**: Custom dialog interface for civilian interactions
 - **Intelligence Gathering**: Get information about nearby enemies and explosive devices
-- **Reputation System**: Global player reputation affects civilian cooperation
+- **Random Cooperation**: Each civilian has a 25-75% random chance of being helpful
 - **Map Markers**: Automatic creation of temporary map markers for discovered threats
 - **Multiplayer Safe**: Designed to work in multiplayer environments
 - **Dynamic Civilians**: Works with spawned/despawned civilians
@@ -33,12 +33,6 @@ A comprehensive addon that allows players to interact with civilians to gather i
   - **⚠️ Known Limitation**: 3DEN editor-placed IEDs may not be detected due to Arma 3 engine limitations
   - Works with ACE explosives (respects defused status)
 
-### Reputation System
-- **Global Parameter**: Uses `CI_PlayerReputation` (0-100 scale)
-- **Dynamic Responses**: Civilian cooperation varies based on reputation
-- **Mission Maker Control**: Can be overridden in mission `init.sqf`
-- **Realistic Behavior**: Low reputation = less cooperation, high reputation = more helpful
-
 ## Installation
 
 1. Copy the `ci_interaction.pbo` file to your Arma 3 `@YourMod/addons/` folder
@@ -54,23 +48,9 @@ A comprehensive addon that allows players to interact with civilians to gather i
    - Ask about enemy movements
    - Ask about mines/IEDs in the area
    - End conversation
-4. Responses depend on your current reputation level
+4. Each civilian has a random 25-75% chance of being helpful
 
 ### For Mission Makers
-
-#### Setting Initial Reputation
-Add this to your mission's `init.sqf` to set a custom starting reputation:
-```sqf
-// Set player reputation (0-100, where 50 is neutral)
-CI_PlayerReputation = 75; // High reputation - civilians are cooperative
-```
-
-#### Reputation Scale
-- **0-20**: Very hostile - civilians refuse to help
-- **21-40**: Unfriendly - limited cooperation
-- **41-60**: Neutral - basic information sharing
-- **61-80**: Friendly - helpful responses
-- **81-100**: Very friendly - maximum cooperation
 
 #### Adding Interactions to Custom Units
 ```sqf
@@ -111,13 +91,14 @@ addons/ci_interaction/
 │   └── civilianInteraction.hpp               # Main dialog definition
 └── functions/
     ├── fn_addInteractionToUnit.sqf           # Add interaction to unit
-    ├── fn_calculateReputation.sqf            # Reputation calculations
     ├── fn_checkNearbyEnemies.sqf             # Enemy detection
+    ├── fn_cleanupConversation.sqf            # Cleanup after conversation
     ├── fn_gatherIntelligence.sqf             # Intelligence gathering & mine/IED detection
     ├── fn_initCivilianInteraction.sqf        # Initialization
     ├── fn_processInteractionResponse.sqf     # Dialog response processing
+    ├── fn_removeInteractionFromUnit.sqf      # Remove interaction from unit
     ├── fn_showInteractionMenu.sqf            # Dialog display
-    └── fn_updateReputationSystem.sqf         # Reputation updates
+    └── fn_updateConversationLock.sqf         # Conversation lock management
 ```
 
 ### CfgFunctions
@@ -137,8 +118,7 @@ All functions are registered under the `CI` tag and can be called using:
 ### Common Issues
 1. **No interaction option**: Ensure the civilian has the interaction added via script
 2. **No intelligence found**: Check if enemies/explosives are actually within range
-3. **Wrong reputation responses**: Verify `CI_PlayerReputation` is set correctly
-4. **IEDs not detected**: 3DEN editor-placed IEDs have known detection issues - use scripted placement for reliable detection
+3. **IEDs not detected**: 3DEN editor-placed IEDs have known detection issues - use scripted placement for reliable detection
 
 ### IED Detection Workaround
 If you need reliable IED detection, use scripted placement instead of 3DEN editor:
@@ -150,7 +130,6 @@ If you need reliable IED detection, use scripted placement instead of 3DEN edito
 ### Debug Information
 The addon includes debug output (visible in system chat) for:
 - Detected explosives with classnames and distances
-- Reputation calculations
 - Intelligence gathering results
 
 ### Performance

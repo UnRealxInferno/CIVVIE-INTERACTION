@@ -28,7 +28,6 @@ class CfgFunctions
             class removeInteractionFromUnit {};
             class showInteractionMenu {};
             class processInteractionResponse {};
-            class calculateReputation {};
             class gatherIntelligence {};
             class checkNearbyEnemies {};
             class updateConversationLock {};
@@ -115,31 +114,14 @@ class CivilianInteractionDialog
             x = 0.32; y = 0.52; w = 0.36; h = 0.05;
             action = "['general'] call CI_fnc_processInteractionResponse;";
         };
-        class ShowReputation: RscButton
-        {
-            idc = -1;
-            text = "Check Reputation";
-            x = 0.32; y = 0.59; w = 0.17; h = 0.04;
-            action = "hint format ['Current Reputation: %1/100', CI_PlayerReputation];";
-        };
         class CloseButton: RscButton
         {
             idc = -1;
             text = "Leave";
-            x = 0.51; y = 0.59; w = 0.17; h = 0.04;
+            x = 0.32; y = 0.59; w = 0.36; h = 0.04;
             action = "[] call CI_fnc_cleanupConversation; closeDialog 0;";
-        };
-        class ReputationDisplay: RscText
-        {
-            idc = 2401;
-            text = "";
-            x = 0.32; y = 0.65; w = 0.36; h = 0.04;
-            colorText[] = {0.8,0.8,0.8,1};
-            sizeEx = 0.03;
-            style = ST_CENTER;
         };
     };
 
-    onLoad = "[] spawn { _reputationText = ''; switch (true) do { case (CI_PlayerReputation >= 80): {_reputationText = 'Hero'}; case (CI_PlayerReputation >= 60): {_reputationText = 'Trusted'}; case (CI_PlayerReputation >= 40): {_reputationText = 'Neutral'}; case (CI_PlayerReputation >= 20): {_reputationText = 'Suspicious'}; default {_reputationText = 'Hostile'}; }; ctrlSetText [2401, format ['Reputation: %1 (%2/100)', _reputationText, CI_PlayerReputation]]; };";
     onUnload = "[] call CI_fnc_cleanupConversation;";
 };
