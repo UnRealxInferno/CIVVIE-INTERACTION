@@ -38,6 +38,9 @@ A comprehensive addon that allows players to interact with civilians to gather i
 - **Dynamic Responses**: Civilian cooperation varies based on reputation
 - **Mission Maker Control**: Can be overridden in mission `init.sqf`
 - **Realistic Behavior**: Low reputation = less cooperation, high reputation = more helpful
+- **Death Detection**: Civilians detect nearby dead civilians (within 200m) and become significantly less cooperative
+  - Each dead civilian reduces cooperation chance by 15% (maximum 60% reduction)
+  - Civilians provide contextual fear-based responses when refusing to help due to nearby deaths
 
 ## Installation
 
@@ -90,6 +93,7 @@ CI_PlayerReputation = 75; // High reputation - civilians are cooperative
 ### Detection Ranges
 - **Enemy Detection**: 1000m radius (configurable in function)
 - **Mine/IED Detection**: 1000m radius (configurable in function)
+- **Dead Civilian Detection**: 200m radius (configurable in `fn_gatherIntelligence.sqf`)
 - **Map Marker Duration**: 300 seconds (5 minutes) auto-removal
 
 ### Supported Explosive Types
@@ -125,6 +129,14 @@ All functions are registered under the `CI` tag and can be called using:
 ```sqf
 [] call CI_fnc_functionName;
 ```
+
+### Civilian Variables
+- `CI_DeadCiviliansNearby`: Number of dead civilians detected within 200m (set during intelligence gathering)
+- `CI_HasSharedEnemyIntel`: Boolean flag tracking if civilian has shared enemy intelligence
+- `CI_HasSharedMineIntel`: Boolean flag tracking if civilian has shared mine intelligence
+- `CI_InConversation`: Boolean flag indicating if civilian is currently in conversation
+- `CI_KnownEnemies`: Array of detected enemy clusters
+- `CI_KnownMines`: Array of detected mine clusters
 
 ### Compatibility
 - **Base Game**: Full compatibility with vanilla Arma 3
@@ -167,4 +179,5 @@ Created for Arma 3 mission makers who want realistic civilian interaction mechan
 - **v1.0**: Initial release with core functionality
 - **v1.1**: Enhanced IED detection and reputation system
 - **v1.2**: Improved multiplayer compatibility and performance
-- **Current**: Comprehensive explosive detection and map marker system
+- **v1.3**: Added civilian death detection system - civilians detect nearby deaths and become less cooperative
+- **Current**: Comprehensive explosive detection, map marker system, and death-aware civilian behavior
