@@ -221,12 +221,6 @@ if (_gaveMineIntel) then {
 // Display response
 hint format ["%1: %2", name _civilian, _response];
 
-// Re-enable civilian movement when conversation ends (execute on server)
-[_civilian, false] remoteExecCall ["CI_fnc_updateConversationLock", 2];
-
-// Release conversation lock (globally synced)
-_civilian setVariable ["CI_InConversation", false, true];
-_civilian setVariable ["CI_TalkingTo", nil, true];
-
-// Close dialog
+// Cleanup conversation and close dialog
+[] call CI_fnc_cleanupConversation;
 closeDialog 0;

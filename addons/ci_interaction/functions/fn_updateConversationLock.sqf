@@ -18,6 +18,7 @@ if (_lockState) then {
     _civilian setVariable ["CI_WasMovingDisabled", true, true];
 } else {
     // Unlock conversation - re-enable movement
+    // Check prevents re-enabling movement if it was disabled externally (e.g., by mission scripts)
     if (_civilian getVariable ["CI_WasMovingDisabled", false]) then {
         _civilian enableAI "MOVE";
         _civilian setVariable ["CI_WasMovingDisabled", false, true];
