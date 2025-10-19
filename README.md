@@ -7,7 +7,6 @@ An Arma 3 addon that lets players talk to civilians to gather intelligence about
 - Talk to civilians using the interaction menu
 - Get intel on nearby enemies and their locations
 - Detect mines, IEDs, and other explosives
-- Reputation system - be nice and civilians help more
 - Auto-creates map markers for discovered threats
 - Works in multiplayer
 
@@ -26,18 +25,6 @@ An Arma 3 addon that lets players talk to civilians to gather intelligence about
 4. Check your map for new markers
 
 ### For Mission Makers
-
-**Set reputation in your mission's `init.sqf`:**
-```sqf
-CI_PlayerReputation = 75; // 0-100 scale (50 is neutral)
-```
-
-**Reputation levels:**
-- 0-20: Civilians won't help
-- 21-40: Limited cooperation
-- 41-60: Neutral
-- 61-80: Friendly
-- 81-100: Very helpful
 
 **Add interaction to specific civilians:**
 ```sqf
