@@ -17,6 +17,11 @@
     - mineCount: Number of mines/explosives in the cluster (50m clustering radius)
     - distance: Distance from civilian to cluster center
     - mineArray: Array of actual mine/explosive objects in the cluster
+    
+    Death detection:
+    - Detects dead civilians within 200m radius
+    - Stores count in CI_DeadCiviliansNearby variable
+    - Used by processInteractionResponse to reduce cooperation chance
 */
 params ["_civilian"];
 
@@ -170,5 +175,21 @@ private _processedMines = [];
     };
 } forEach _detectedMines;
 
+// Third pass: detect nearby dead civilians to affect cooperation
+private _deadCivilians = [];
+
+{
+    // Check if unit is a dead civilian
+    // Note: nearEntities uses CI_DEATH_DETECTION_RANGE parameter to filter by distance
+    if (
+        !alive _x &&
+        {side _x == civilian} &&
+        {_x != _civilian}
+    ) then {
+        _deadCivilians pushBack _x;
+    };
+} forEach (_civilian nearEntities ["Man", CI_DEATH_DETECTION_RANGE]);
+
 _civilian setVariable ["CI_KnownEnemies", _knownEnemies];
 _civilian setVariable ["CI_KnownMines", _knownMines];
+_civilian setVariable ["CI_DeadCiviliansNearby", count _deadCivilians];
