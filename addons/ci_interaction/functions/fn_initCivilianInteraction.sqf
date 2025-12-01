@@ -6,7 +6,7 @@
     This runs postInit (scheduled environment allowed) defined in CfgFunctions.
 
     Notes:
-    - Relies on global CI_PlayerReputation (mission makers can override in init.sqf before postInit executes by defining it earlier)
+    - Civilians have a random 25-75% chance of being helpful when asked for intel
     - Monitors dynamically spawned civilians and attaches the interaction action.
 */
 
@@ -15,10 +15,6 @@ if (!hasInterface) exitWith {};
 
 // Initialize core data structures only once
 if (isNil "CI_IntelligenceData") then { CI_IntelligenceData = createHashMap; };
-
-// Default global reputation if not set by mission maker (range clamp 1-100)
-if (isNil "CI_PlayerReputation") then { CI_PlayerReputation = 50; }; // 50 is a half chance of getting intel, can be adjusted
-CI_PlayerReputation = (CI_PlayerReputation max 1) min 100;
 
 // Configurable constants (can be overridden preInit by mission maker)
 if (isNil "CI_INTEL_RANGE") then { CI_INTEL_RANGE = 1000; };

@@ -7,7 +7,7 @@ An Arma 3 addon that lets players talk to civilians to gather intelligence about
 ### Core Functionality
 - **Interactive Dialog System**: Custom dialog interface for civilian interactions
 - **Intelligence Gathering**: Get information about nearby enemies and explosive devices
-- **Reputation System**: Global player reputation affects civilian cooperation
+- **Random Cooperation**: Each civilian has a 25-75% random chance of being helpful
 - **Map Markers**: Automatic creation of temporary map markers for discovered threats
 - **Multiplayer Safe**: Designed to work in multiplayer environments
 - **Dynamic Civilians**: Works with spawned/despawned civilians
@@ -139,13 +139,14 @@ addons/ci_interaction/
 │   └── civilianInteraction.hpp               # Main dialog definition
 └── functions/
     ├── fn_addInteractionToUnit.sqf           # Add interaction to unit
-    ├── fn_calculateReputation.sqf            # Reputation calculations
     ├── fn_checkNearbyEnemies.sqf             # Enemy detection
+    ├── fn_cleanupConversation.sqf            # Cleanup after conversation
     ├── fn_gatherIntelligence.sqf             # Intelligence gathering & mine/IED detection
     ├── fn_initCivilianInteraction.sqf        # Initialization
     ├── fn_processInteractionResponse.sqf     # Dialog response processing
+    ├── fn_removeInteractionFromUnit.sqf      # Remove interaction from unit
     ├── fn_showInteractionMenu.sqf            # Dialog display
-    └── fn_updateReputationSystem.sqf         # Reputation updates
+    └── fn_updateConversationLock.sqf         # Conversation lock management
 ```
 
 ### CfgFunctions
@@ -173,8 +174,7 @@ All functions are registered under the `CI` tag and can be called using:
 ### Common Issues
 1. **No interaction option**: Ensure the civilian has the interaction added via script
 2. **No intelligence found**: Check if enemies/explosives are actually within range
-3. **Wrong reputation responses**: Verify `CI_PlayerReputation` is set correctly
-4. **IEDs not detected**: 3DEN editor-placed IEDs have known detection issues - use scripted placement for reliable detection
+3. **IEDs not detected**: 3DEN editor-placed IEDs have known detection issues - use scripted placement for reliable detection
 
 ### IED Detection Workaround
 If you need reliable IED detection, use scripted placement instead of 3DEN editor:
@@ -186,7 +186,6 @@ If you need reliable IED detection, use scripted placement instead of 3DEN edito
 ### Debug Information
 The addon includes debug output (visible in system chat) for:
 - Detected explosives with classnames and distances
-- Reputation calculations
 - Intelligence gathering results
 
 ### Performance
