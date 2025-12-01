@@ -1,6 +1,6 @@
 # Civilian Interaction Addon for Arma 3
 
-A comprehensive addon that allows players to interact with civilians to gather intelligence about enemy troops and explosive devices (mines/IEDs). Civilians have a random chance (25-75%) of being helpful when asked for information.
+An Arma 3 addon that lets players talk to civilians to gather intelligence about enemies and explosives. Features a reputation system that affects how helpful civilians are.
 
 ## Features
 
@@ -33,28 +33,69 @@ A comprehensive addon that allows players to interact with civilians to gather i
   - **⚠️ Known Limitation**: 3DEN editor-placed IEDs may not be detected due to Arma 3 engine limitations
   - Works with ACE explosives (respects defused status)
 
+### Reputation System
+- **Global Parameter**: Uses `CI_PlayerReputation` (0-100 scale)
+- **Dynamic Responses**: Civilian cooperation varies based on reputation
+- **Mission Maker Control**: Can be overridden in mission `init.sqf`
+- **Realistic Behavior**: Low reputation = less cooperation, high reputation = more helpful
+- **Death Detection**: Civilians detect nearby dead civilians (within 200m) and become significantly less cooperative
+  - Each dead civilian reduces cooperation chance by 15% (maximum 60% reduction)
+  - Civilians provide contextual fear-based responses when refusing to help due to nearby deaths
+- Talk to civilians using the interaction menu
+- Get intel on nearby enemies and their locations
+- Detect mines, IEDs, and other explosives
+- Auto-creates map markers for discovered threats
+- Works in multiplayer
+
 ## Installation
 
-1. Copy the `ci_interaction.pbo` file to your Arma 3 `@YourMod/addons/` folder
+1. Copy `ci_interaction.pbo` to your Arma 3 `@YourMod/addons/` folder
 2. Load the mod in Arma 3
-3. The addon will automatically initialize when the mission starts
+3. That's it! The addon auto-initializes
 
-## Usage
+## How to Use
 
 ### For Players
-1. Approach any civilian unit
-2. Use the interaction menu (scroll wheel) to select "Talk to Civilian"
-3. Choose from available dialog options:
-   - Ask about enemy movements
-   - Ask about mines/IEDs in the area
-   - End conversation
-4. Each civilian has a random 25-75% chance of being helpful
+1. Walk up to a civilian
+2. Use scroll wheel menu → "Talk to Civilian"
+3. Ask about enemies or explosives
+4. Check your map for new markers
 
 ### For Mission Makers
 
-#### Adding Interactions to Custom Units
+#### Setting Initial Reputation
+Add this to your mission's `init.sqf` to set a custom starting reputation:
 ```sqf
-// Add interaction to specific civilian
+// Set player reputation (0-100, where 50 is neutral)
+CI_PlayerReputation = 75; // High reputation - civilians are cooperative
+```
+
+#### Configuring Death Detection System
+Customize the death detection behavior in your mission's `init.sqf`:
+```sqf
+// Detection range for dead civilians (default: 200m)
+CI_DEATH_DETECTION_RANGE = 150;
+
+// Penalty per dead civilian (default: 0.15 or 15%)
+CI_DEATH_PENALTY_PER_CIVILIAN = 0.20;
+
+// Maximum total penalty (default: 0.6 or 60%)
+CI_DEATH_PENALTY_MAX = 0.5;
+
+// Minimum success chance floor (default: 0.05 or 5%)
+CI_MIN_SUCCESS_CHANCE = 0.10;
+```
+
+#### Reputation Scale
+- **0-20**: Very hostile - civilians refuse to help
+- **21-40**: Unfriendly - limited cooperation
+- **41-60**: Neutral - basic information sharing
+- **61-80**: Friendly - helpful responses
+- **81-100**: Very friendly - maximum cooperation
+
+#### Adding Interactions to Custom Units
+**Add interaction to specific civilians:**
+```sqf
 [_civilianUnit] call CI_fnc_addInteractionToUnit;
 
 // Add to all civilians in area
@@ -68,9 +109,16 @@ A comprehensive addon that allows players to interact with civilians to gather i
 ## Configuration
 
 ### Detection Ranges
-- **Enemy Detection**: 1000m radius (configurable in function)
-- **Mine/IED Detection**: 1000m radius (configurable in function)
+- **Enemy Detection**: 1000m radius (configurable via `CI_INTEL_RANGE`)
+- **Mine/IED Detection**: 1000m radius (configurable via `CI_INTEL_RANGE`)
+- **Dead Civilian Detection**: 200m radius (configurable via `CI_DEATH_DETECTION_RANGE`)
 - **Map Marker Duration**: 300 seconds (5 minutes) auto-removal
+
+### Death Detection Parameters
+- **CI_DEATH_DETECTION_RANGE**: Detection range for dead civilians (default: 200m)
+- **CI_DEATH_PENALTY_PER_CIVILIAN**: Cooperation penalty per death (default: 0.15 or 15%)
+- **CI_DEATH_PENALTY_MAX**: Maximum total penalty cap (default: 0.6 or 60%)
+- **CI_MIN_SUCCESS_CHANCE**: Minimum success chance floor (default: 0.05 or 5%)
 
 ### Supported Explosive Types
 The addon detects a wide range of explosive devices:
@@ -107,6 +155,14 @@ All functions are registered under the `CI` tag and can be called using:
 [] call CI_fnc_functionName;
 ```
 
+### Civilian Variables
+- `CI_DeadCiviliansNearby`: Number of dead civilians detected within 200m (set during intelligence gathering)
+- `CI_HasSharedEnemyIntel`: Boolean flag tracking if civilian has shared enemy intelligence
+- `CI_HasSharedMineIntel`: Boolean flag tracking if civilian has shared mine intelligence
+- `CI_InConversation`: Boolean flag indicating if civilian is currently in conversation
+- `CI_KnownEnemies`: Array of detected enemy clusters
+- `CI_KnownMines`: Array of detected mine clusters
+
 ### Compatibility
 - **Base Game**: Full compatibility with vanilla Arma 3
 - **ACE**: Respects ACE explosives defused status
@@ -138,12 +194,23 @@ The addon includes debug output (visible in system chat) for:
 - Temporary marker cleanup to prevent map clutter
 
 ## Credits
+```
 
-Created for Arma 3 mission makers who want realistic civilian interaction mechanics with intelligence gathering capabilities.
+## Settings
 
-## Version History
+- **Detection range**: 1000m for enemies and explosives
+- **Map markers**: Auto-remove after 5 minutes
+- **Works with**: Vanilla Arma 3, ACE, and most mods
+
+## Known Issues
 
 - **v1.0**: Initial release with core functionality
 - **v1.1**: Enhanced IED detection and reputation system
 - **v1.2**: Improved multiplayer compatibility and performance
-- **Current**: Comprehensive explosive detection and map marker system
+- **v1.3**: Added civilian death detection system - civilians detect nearby deaths and become less cooperative
+- **Current**: Comprehensive explosive detection, map marker system, and death-aware civilian behavior
+- IEDs placed in 3DEN editor might not be detected (Arma 3 limitation)
+- Use scripted placement for reliable IED detection:
+  ```sqf
+  "IEDLandBig_Remote_Mag" createVehicle [x, y, z];
+  ```

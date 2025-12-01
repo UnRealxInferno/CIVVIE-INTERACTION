@@ -16,6 +16,14 @@ private _hasSharedMineIntel = _civilian getVariable ["CI_HasSharedMineIntel", fa
 // Random success chance between 25-75%
 private _successChance = 0.25 + (random 0.5);
 
+// Apply penalty for nearby dead civilians
+private _deadCiviliansNearby = _civilian getVariable ["CI_DeadCiviliansNearby", 0];
+if (_deadCiviliansNearby > 0) then {
+    // Reduce success chance based on configurable penalty values
+    private _deathPenalty = (_deadCiviliansNearby * CI_DEATH_PENALTY_PER_CIVILIAN) min CI_DEATH_PENALTY_MAX;
+    _successChance = (_successChance - _deathPenalty) max CI_MIN_SUCCESS_CHANCE;
+};
+
 private _success = random 1 < _successChance;
 private _response = "";
 private _gaveEnemyIntel = false;
@@ -96,13 +104,26 @@ switch (_questionType) do {
                     _gaveEnemyIntel = true; // Mark as shared even if no intel to prevent repeated questions
                 };
             } else {
-                private _responses = [
-                    "I don't know anything about that.",
-                    "I prefer not to talk about such things.", 
-                    "Sorry, I haven't seen anything.",
-                    "I don't pay attention to those matters.",
-                    "I'm just trying to mind my own business."
-                ];
+                private _responses = [];
+                
+                // Add death-aware responses if there are dead civilians nearby
+                if (_deadCiviliansNearby > 0) then {
+                    _responses = [
+                        "I... I can't talk about this. Not after what I've seen.",
+                        "Please, just leave me alone. People are dying here.",
+                        "I don't want any trouble. Look what happened to my neighbors...",
+                        "I'm too scared to help. Too many have died already.",
+                        "You see what happens to people around here? I can't risk it."
+                    ];
+                } else {
+                    _responses = [
+                        "I don't know anything about that.",
+                        "I prefer not to talk about such things.", 
+                        "Sorry, I haven't seen anything.",
+                        "I don't pay attention to those matters.",
+                        "I'm just trying to mind my own business."
+                    ];
+                };
                 _response = selectRandom _responses;
                 _gaveEnemyIntel = true; // Mark as shared even if refused to prevent spam
             };
@@ -177,13 +198,26 @@ switch (_questionType) do {
                     _gaveMineIntel = true;
                 };
             } else {
-                private _responses = [
-                    "I don't know about such things.",
-                    "I try not to wander far from here.",
-                    "Sorry, I can't help with that.",
-                    "I don't know the area that well.",
-                    "I haven't noticed anything dangerous."
-                ];
+                private _responses = [];
+                
+                // Add death-aware responses if there are dead civilians nearby
+                if (_deadCiviliansNearby > 0) then {
+                    _responses = [
+                        "I don't know about such things. Not after... not after what happened.",
+                        "Please, I just want to survive. I've seen too much death.",
+                        "I'm sorry, I can't help. It's too dangerous here.",
+                        "Look around you. Do you think I want to end up like them?",
+                        "I won't talk about dangerous things. Not when people are dying."
+                    ];
+                } else {
+                    _responses = [
+                        "I don't know about such things.",
+                        "I try not to wander far from here.",
+                        "Sorry, I can't help with that.",
+                        "I don't know the area that well.",
+                        "I haven't noticed anything dangerous."
+                    ];
+                };
                 _response = selectRandom _responses;
                 _gaveMineIntel = true;
             };

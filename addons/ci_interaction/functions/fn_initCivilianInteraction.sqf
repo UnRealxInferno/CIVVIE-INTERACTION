@@ -18,6 +18,10 @@ if (isNil "CI_IntelligenceData") then { CI_IntelligenceData = createHashMap; };
 
 // Configurable constants (can be overridden preInit by mission maker)
 if (isNil "CI_INTEL_RANGE") then { CI_INTEL_RANGE = 1000; };
+if (isNil "CI_DEATH_DETECTION_RANGE") then { CI_DEATH_DETECTION_RANGE = 200; };
+if (isNil "CI_DEATH_PENALTY_PER_CIVILIAN") then { CI_DEATH_PENALTY_PER_CIVILIAN = 0.15; };
+if (isNil "CI_DEATH_PENALTY_MAX") then { CI_DEATH_PENALTY_MAX = 0.6; };
+if (isNil "CI_MIN_SUCCESS_CHANCE") then { CI_MIN_SUCCESS_CHANCE = 0.05; };
 
 // Background process to:
 // 1) Permanently mark any unit that is (or becomes) non-civilian as ineligible (CI_EverNonCivilian)
