@@ -139,13 +139,17 @@ addons/ci_interaction/
 │   └── civilianInteraction.hpp               # Main dialog definition
 └── functions/
     ├── fn_addInteractionToUnit.sqf           # Add interaction to unit
+    ├── fn_calculateIntelSuccess.sqf          # Server-side success calculation
     ├── fn_checkNearbyEnemies.sqf             # Enemy detection
     ├── fn_cleanupConversation.sqf            # Cleanup after conversation
-    ├── fn_gatherIntelligence.sqf             # Intelligence gathering & mine/IED detection
+    ├── fn_gatherIntelligence.sqf             # Server-side intelligence gathering
+    ├── fn_handleIntelResult.sqf              # Client-side result handling
     ├── fn_initCivilianInteraction.sqf        # Initialization
+    ├── fn_lockCivilianForConversation.sqf    # Server-side conversation locking
     ├── fn_processInteractionResponse.sqf     # Dialog response processing
     ├── fn_removeInteractionFromUnit.sqf      # Remove interaction from unit
     ├── fn_showInteractionMenu.sqf            # Dialog display
+    ├── fn_unlockCivilianConversation.sqf     # Server-side conversation unlock
     └── fn_updateConversationLock.sqf         # Conversation lock management
 ```
 
@@ -168,6 +172,13 @@ All functions are registered under the `CI` tag and can be called using:
 - **ACE**: Respects ACE explosives defused status
 - **Mods**: Designed to work with popular civilian and explosive mods
 - **Multiplayer**: Safe for dedicated servers and multiplayer sessions
+
+### Multiplayer Security
+All critical functions run on the server to prevent client-side manipulation:
+- **Intelligence Gathering**: Enemy and mine detection runs server-side
+- **Success Calculation**: Random success chances calculated server-side
+- **Conversation Locking**: Server-authoritative to prevent race conditions
+- **Variable Synchronization**: All civilian state variables broadcast globally from server
 
 ## Troubleshooting
 
