@@ -32,6 +32,10 @@ class CfgFunctions
             class checkNearbyEnemies {};
             class updateConversationLock {};
             class cleanupConversation {};
+            class lockCivilianForConversation {};
+            class calculateIntelSuccess {};
+            class handleIntelResult {};
+            class unlockCivilianConversation {};
         };
     };
 };

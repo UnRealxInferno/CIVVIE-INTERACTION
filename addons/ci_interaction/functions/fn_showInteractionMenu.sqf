@@ -10,18 +10,16 @@ params ["_civilian", "_player"];
 private _isInConversation = _civilian getVariable ["CI_InConversation", false];
 if (_isInConversation) exitWith {};
 
-// Lock the civilian for conversation (globally synced)
-_civilian setVariable ["CI_InConversation", true, true];
-_civilian setVariable ["CI_TalkingTo", name _player, true];
+// MULTIPLAYER SECURITY: Lock the civilian for conversation on server
+// This prevents race conditions where multiple players try to talk to same civilian
+[_civilian, _player] remoteExecCall ["CI_fnc_lockCivilianForConversation", 2];
 
 CI_CurrentCivilian = _civilian;
 CI_CurrentPlayer = _player;
 
-// Stop civilian movement during conversation (execute on server for dedicated server support)
-[_civilian, true] remoteExecCall ["CI_fnc_updateConversationLock", 2];
-
-// Update civilian's intelligence before interaction
-[_civilian] call CI_fnc_gatherIntelligence;
+// MULTIPLAYER SECURITY: Request intelligence gathering from server
+// Pass the player reference so server knows which side to check hostility against
+[_civilian, _player] remoteExecCall ["CI_fnc_gatherIntelligence", 2];
 
 // Open the dialog
 createDialog "CivilianInteractionDialog";

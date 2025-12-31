@@ -1,8 +1,11 @@
 /*
     Gather Intelligence (Addon)
-    Parameters: 0: OBJECT - Civilian
+    Parameters: 
+    0: OBJECT - Civilian
+    1: OBJECT - Player requesting intel (optional, for multiplayer)
     
     Called when player asks for information - civilian "looks around" for threats
+    This function MUST run on server in multiplayer to prevent client-side manipulation.
     
     Enemy data structure: Each enemy entry is an array containing:
     [position, enemyCount, distance, unitArray]
@@ -23,17 +26,29 @@
     - Stores count in CI_DeadCiviliansNearby variable
     - Used by processInteractionResponse to reduce cooperation chance
 */
-params ["_civilian"];
+params ["_civilian", ["_requestingPlayer", objNull]];
+
+// MULTIPLAYER SECURITY: Must run on server to prevent client-side abuse
+if (!isServer) exitWith {
+    // Forward call to server with player reference
+    private _player = if (isNull _requestingPlayer) then { player } else { _requestingPlayer };
+    [_civilian, _player] remoteExecCall ["CI_fnc_gatherIntelligence", 2];
+};
 
 // Civilian actively scans the area when asked
 private _knownEnemies = [];
 private _detectedEnemies = [];
 
 // Determine the reference side for hostility checks: prefer interacting player's side
-private _playerSide = side player;
-if (!isNil "CI_CurrentPlayer") then {
-    private _p = CI_CurrentPlayer;
-    if (!isNull _p) then { _playerSide = side _p; };
+private _playerSide = civilian; // Default to civilian (won't match any hostile)
+if (!isNull _requestingPlayer) then {
+    _playerSide = side _requestingPlayer;
+} else {
+    // Fallback for single player or local calls
+    if (!isNil "CI_CurrentPlayer") then {
+        private _p = CI_CurrentPlayer;
+        if (!isNull _p) then { _playerSide = side _p; };
+    };
 };
 
 // First pass: detect individual enemies
@@ -190,6 +205,8 @@ private _deadCivilians = [];
     };
 } forEach (_civilian nearEntities ["Man", CI_DEATH_DETECTION_RANGE]);
 
-_civilian setVariable ["CI_KnownEnemies", _knownEnemies];
-_civilian setVariable ["CI_KnownMines", _knownMines];
-_civilian setVariable ["CI_DeadCiviliansNearby", count _deadCivilians];
+// MULTIPLAYER SECURITY: Server sets variables with global broadcast
+// Using third parameter 'true' ensures all clients receive the update
+_civilian setVariable ["CI_KnownEnemies", _knownEnemies, true];
+_civilian setVariable ["CI_KnownMines", _knownMines, true];
+_civilian setVariable ["CI_DeadCiviliansNearby", count _deadCivilians, true];

@@ -4,6 +4,9 @@
     Releases conversation locks and re-enables civilian movement.
     Called when dialog closes via any method (Leave button, ESC, etc.)
     
+    MULTIPLAYER SECURITY: Forwards cleanup to server to ensure
+    conversation state is properly released.
+    
     This function reads from the global CI_CurrentCivilian variable set during interaction.
 */
 
@@ -12,9 +15,5 @@ if (isNil "CI_CurrentCivilian") exitWith {};
 
 private _civilian = CI_CurrentCivilian;
 
-// Re-enable civilian movement on server
-[_civilian, false] remoteExecCall ["CI_fnc_updateConversationLock", 2];
-
-// Release conversation lock variables (globally synced)
-_civilian setVariable ["CI_InConversation", false, true];
-_civilian setVariable ["CI_TalkingTo", nil, true];
+// MULTIPLAYER SECURITY: Forward cleanup to server
+[_civilian] remoteExecCall ["CI_fnc_unlockCivilianConversation", 2];
