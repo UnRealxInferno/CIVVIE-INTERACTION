@@ -35,10 +35,10 @@ private _successChance = 0.25 + (random 0.5);
 // Apply penalty for nearby dead civilians (data gathered by server in gatherIntelligence)
 private _deadCiviliansNearby = _civilian getVariable ["CI_DeadCiviliansNearby", 0];
 
-// Get configurable values (defaults if not set)
-private _deathPenaltyPerCivilian = missionNamespace getVariable ["CI_DEATH_PENALTY_PER_CIVILIAN", 0.15];
-private _deathPenaltyMax = missionNamespace getVariable ["CI_DEATH_PENALTY_MAX", 0.6];
-private _minSuccessChance = missionNamespace getVariable ["CI_MIN_SUCCESS_CHANCE", 0.05];
+// Get configurable values using same approach as original code
+private _deathPenaltyPerCivilian = if (isNil "CI_DEATH_PENALTY_PER_CIVILIAN") then { 0.15 } else { CI_DEATH_PENALTY_PER_CIVILIAN };
+private _deathPenaltyMax = if (isNil "CI_DEATH_PENALTY_MAX") then { 0.6 } else { CI_DEATH_PENALTY_MAX };
+private _minSuccessChance = if (isNil "CI_MIN_SUCCESS_CHANCE") then { 0.05 } else { CI_MIN_SUCCESS_CHANCE };
 
 if (_deadCiviliansNearby > 0) then {
     // Reduce success chance based on configurable penalty values

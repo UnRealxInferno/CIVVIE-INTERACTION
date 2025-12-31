@@ -59,7 +59,8 @@ switch (_questionType) do {
                     _enemyCluster params ["_position", "_enemyCount", "_distance", "_unitArray"];
                     
                     // Create map marker for the cluster (LOCAL to this player only)
-                    private _markerName = format ["CI_EnemyIntel_%1_%2", time, random 10000];
+                    // Use getPlayerUID for unique marker names across clients
+                    private _markerName = format ["CI_EnemyIntel_%1_%2", getPlayerUID player, diag_tickTime];
                     private _marker = createMarkerLocal [_markerName, _position];
                     _marker setMarkerTypeLocal "hd_warning";
                     _marker setMarkerColorLocal "ColorRed";
@@ -154,7 +155,8 @@ switch (_questionType) do {
                     _mineCluster params ["_position", "_mineCount", "_distance", "_mineArray"];
                     
                     // Create map marker for mine location (LOCAL to this player only)
-                    private _markerName = format ["CI_MineIntel_%1_%2", time, random 10000];
+                    // Use getPlayerUID for unique marker names across clients
+                    private _markerName = format ["CI_MineIntel_%1_%2", getPlayerUID player, diag_tickTime];
                     private _marker = createMarkerLocal [_markerName, _position];
                     _marker setMarkerTypeLocal "hd_warning";
                     _marker setMarkerColorLocal "ColorYellow";

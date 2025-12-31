@@ -35,6 +35,13 @@ if (!isServer) exitWith {
     [_civilian, _player] remoteExecCall ["CI_fnc_gatherIntelligence", 2];
 };
 
+// Validate inputs - on dedicated server we need a valid player reference
+if (isNull _civilian) exitWith {};
+if (isNull _requestingPlayer) exitWith {
+    // Cannot proceed without a valid player reference on server
+    diag_log "CI: gatherIntelligence called on server without valid player reference";
+};
+
 // Civilian actively scans the area when asked
 private _knownEnemies = [];
 private _detectedEnemies = [];
@@ -43,12 +50,6 @@ private _detectedEnemies = [];
 private _playerSide = civilian; // Default to civilian (won't match any hostile)
 if (!isNull _requestingPlayer) then {
     _playerSide = side _requestingPlayer;
-} else {
-    // Fallback for single player or local calls
-    if (!isNil "CI_CurrentPlayer") then {
-        private _p = CI_CurrentPlayer;
-        if (!isNull _p) then { _playerSide = side _p; };
-    };
 };
 
 // First pass: detect individual enemies
